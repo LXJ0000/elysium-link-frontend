@@ -1,8 +1,6 @@
 ## 项目简介
 
-小兔鲜儿项目包含从首页浏览商品，商品详情，微信登录，加入购物车，提交订单，微信支付，订单管理等功能。
-
-当前仓库为小兔鲜儿的**项目模板**。
+悦联 Elysium Link 项目包含xxx、xxx、xxx等功能。
 
 ### 技术栈
 
@@ -10,23 +8,11 @@
 - 状态管理：[pinia](https://pinia.vuejs.org/zh/)
 - 组件库：[uni-ui](https://uniapp.dcloud.net.cn/component/uniui/uni-ui.html)
 
-## 资料说明
+### 📗 后端接口文档
 
-### 📀 视频学习
+<!-- ### 📦 项目源码
 
-[https://www.bilibili.com/video/BV1Bp4y1379L/](https://www.bilibili.com/video/BV1Bp4y1379L/?share_source=copy_web&vd_source=2ac50d29193927b3c8597537dc4bc81d)
-
-### 📗 接口文档
-
-[https://www.apifox.cn/apidoc/shared-0e6ee326-d646-41bd-9214-29dbf47648fa/](https://www.apifox.cn/apidoc/shared-0e6ee326-d646-41bd-9214-29dbf47648fa/)
-
-### ✏️ 在线笔记
-
-[https://megasu.gitee.io/uni-app-shop-note/](https://megasu.gitee.io/uni-app-shop-note/)
-
-### 📦 项目源码
-
-[https://gitee.com/Megasu/uniapp-shop-vue3-ts/](https://gitee.com/Megasu/uniapp-shop-vue3-ts/)
+[https://gitee.com/Megasu/uniapp-shop-vue3-ts/](https://gitee.com/Megasu/uniapp-shop-vue3-ts/) -->
 
 ## 运行程序
 
@@ -96,3 +82,14 @@ npm run dev:h5
 ├── tsconfig.json              # typescript 配置
 └── vite.config.ts             # vite 配置
 ```
+
+## 开发规范
+### 代码提交·
+用于说明 commit 的类别，只允许使用下面7个标识。
+- feat：新功能（feature）
+- fix：修补bug
+- docs：文档（documentation）
+- style： 格式（不影响代码运行的变动）
+- refactor：重构（即不是新增功能，也不是修改bug的代码变动）
+- test：增加测试
+- chore：构建过程或辅助工具的变动
