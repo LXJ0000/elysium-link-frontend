@@ -7,7 +7,7 @@ const memberStore = useMemberStore()
 const getDate = async () => {
   const res = await http<string[]>({
     method: 'GET',
-    url: '/home/banner',
+    url: '',
     header: {},
   })
   console.log(res)
