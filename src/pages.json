@@ -36,6 +36,7 @@
       "path": "pages/login/login",
       "style": {
         "navigationBarTitleText": "登录"
+        // "navigationStyle": "custom"
       }
     }
   ],
@@ -75,6 +76,10 @@
         "pagePath": "pages/my/my",
         "iconPath": "static/tabs/user_default.png",
         "selectedIconPath": "static/tabs/user_selected.png"
+      },
+      {
+        "text": "登陆",
+        "pagePath": "pages/login/login"
       }
     ]
   }
