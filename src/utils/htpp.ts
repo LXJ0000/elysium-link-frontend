@@ -24,3 +24,28 @@ const httpInterceptor = {
 }
 uni.addInterceptor('request', httpInterceptor)
 uni.addInterceptor('uploadFile', httpInterceptor)
+
+interface Data<T> {
+  message: string
+  code: number
+  result: T
+}
+
+export const http = <T>(options: UniApp.RequestOptions) => {
+  return new Promise<Data<T>>((resolve, reject) => {
+    uni.request({
+      ...options,
+      success: (res) => {
+        resolve(res.data as Data<T>)
+      },
+      //   success: ({ data, statusCode, header }) => {
+      //     resolve({
+      //       data,
+      //       statusCode,
+      //       header,
+      //     })
+      //   },
+      fail: (error) => {},
+    })
+  })
+}
