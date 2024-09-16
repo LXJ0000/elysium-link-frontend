@@ -29,7 +29,7 @@ pnpm i --registry=https://registry.npmmirror.com
 2. 运行程序
 
 ```shell
-# 微信小程序端
+# 微信小程序端 需提前安装 微信开发者工具 申请并填写 appid 于 manifest.json 文件中
 npm run dev:mp-weixin
 
 # H5端
