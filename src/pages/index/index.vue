@@ -1,183 +1,284 @@
-<!-- <script setup lang="ts">
-import { ref } from 'vue'
-import datas from '@/utils/data'
-const friendList = ref(datas.methods.friends())
+<script lang="ts" setup>
+import { ref, onMounted } from 'vue'
+import { onPullDownRefresh, onReachBottom } from '@dcloudio/uni-app'
+
+interface ChatItem {
+  id: string
+  avatar: string
+  name: string
+  lastMessage: string
+  lastTime: string
+  unreadCount: number
+  isGroup: boolean
+}
+
+const chatList = ref()
+const selectedChat = ref<string | null>(null)
+const isSearchExpanded = ref(false)
+
+const loadChatList = async () => {
+  // 模拟API调用
+  const mockData: ChatItem[] = [
+    {
+      id: '1',
+      avatar: '../../static/images/avatar1.jpg',
+      name: '张三',
+      lastMessage: '今晚一起吃饭吗？',
+      lastTime: '18:30',
+      unreadCount: 2,
+      isGroup: false,
+    },
+    {
+      id: '2',
+      avatar: '../../static/images/avatar1.jpg',
+      name: '周末团建群',
+      lastMessage: '李四: 大家有什么想法吗？',
+      lastTime: '昨天',
+      unreadCount: 5,
+      isGroup: true,
+    },
+    {
+      id: '3',
+      avatar: '../../static/images/avatar1.jpg',
+      name: '王五',
+      lastMessage: '项目进展如何？',
+      lastTime: '星期二',
+      unreadCount: 0,
+      isGroup: false,
+    },
+    {
+      id: '4',
+      avatar: '../../static/images/avatar1.jpg',
+      name: '技术交流群',
+      lastMessage: '赵六: 有人遇到这个问题吗？',
+      lastTime: '星期一',
+      unreadCount: 10,
+      isGroup: true,
+    },
+    {
+      id: '5',
+      avatar: '../../static/images/avatar1.jpg',
+      name: '妈妈',
+      lastMessage: '记得按时吃饭',
+      lastTime: '3天前',
+      unreadCount: 1,
+      isGroup: false,
+    },
+    // 添加更多模拟数据...
+  ]
+  chatList.value = mockData
+}
+
+const refreshList = async () => {
+  await loadChatList()
+  uni.stopPullDownRefresh()
+}
+
+const loadMore = async () => {
+  // 模拟加载更多数据
+  console.log('加载更多...')
+}
+
+const selectChat = (id: string) => {
+  selectedChat.value = id
+  // 这里可以添加导航到聊天详情页的逻辑
+  uni.navigateTo({
+    url: `/pages/chat/detail?id=${id}`,
+  })
+}
+
+const toggleSearch = () => {
+  isSearchExpanded.value = !isSearchExpanded.value
+}
+
+onMounted(loadChatList)
+onPullDownRefresh(refreshList)
+onReachBottom(loadMore)
 </script>
 
 <template>
-  <view class="content">
+  <view class="chat-list-container">
     <view class="top-bar">
-      <view class="top-bar-l">
-        <image src="@/static/images/avator3.jpg" mode=""></image>
+      <image class="avatar" src="../../static/images/avatar1.jpg" mode="aspectFill" />
+      <view class="search-box" :class="{ expanded: isSearchExpanded }" @tap="toggleSearch">
+        <image src="../../static/images/avatar1.jpg" mode="aspectFit" class="search-icon" />
+        <input v-if="isSearchExpanded" type="text" placeholder="搜索" />
       </view>
-      <view class="top-bar-c">
-        <image src="@/static/logo.png" mode=""></image>
-      </view>
-      <view class="top-bar-r">
-        <view class="search">
-          <image src="@/static/images/search.png" mode=""></image>
-        </view>
-        <view class="add">
-          <image src="@/static/images/add_group.png" mode=""></image>
-        </view>
+      <view class="icons">
+        <image src="../../static/images/avatar1.jpg" mode="aspectFit" />
       </view>
     </view>
-    <view class="main">
+
+    <scroll-view scroll-y class="chat-list" @scrolltolower="loadMore">
       <view
-        class="friend-list"
-        v-for="(item, index) in friendList"
-        :key="item.id"
-        :class="'friend-list-' + index"
+        v-for="chat in chatList"
+        :key="chat.id"
+        class="chat-item"
+        :class="{ active: selectedChat === chat.id }"
+        @touchstart="selectedChat = chat.id"
+        @touchend="selectedChat = null"
+        @tap="selectChat(chat.id)"
       >
-        <view class="friend-list-l">
-          <view class="tip">
-            {{ item.tip }}
+        <view class="avatar-container">
+          <image class="chat-avatar" :src="chat.avatar" mode="aspectFill" />
+          <view v-if="chat.unreadCount > 0" class="unread-count">
+            {{ chat.unreadCount > 99 ? '99+' : chat.unreadCount }}
           </view>
-          <image :src="item.imageUrl" mode=""></image>
         </view>
-        <view class="friend-list-r">
-          <view class="top">
-            <view class="name">
-              {{ item.name }}
-            </view>
-            <view class="time"> 13:13 </view>
+        <view class="chat-info">
+          <view class="chat-header">
+            <text class="chat-name">{{ chat.name }}</text>
+            <text class="chat-time">{{ chat.lastTime }}</text>
           </view>
-          <view class="news">
-            {{ item.news }}
+          <view class="chat-message">
+            <text class="message-content">{{ chat.lastMessage }}</text>
           </view>
         </view>
       </view>
-    </view>
+    </scroll-view>
   </view>
 </template>
 
-<style lang="scss">
-.content {
-  // display: flex;
-  // flex-direction: column;
-  // align-items: center;
-  // justify-content: center;
-  padding-top: var(--status-bar-height);
-  padding-bottom: $uni-spacing-col-lg;
-  .top-bar {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 88rpx;
-    padding-top: var(--status-bar-height);
-    box-shadow: 0px 1px 0px 0px rgba(0, 0, 0, 0.1);
-
-    .top-bar-l {
-      float: left;
-      padding-left: $uni-spacing-col-base;
-      margin-top: 10rpx;
-      image {
-        width: 68rpx;
-        height: 68rpx;
-        border-radius: 16rpx;
-      }
-    }
-    .top-bar-c {
-      position: absolute;
-      left: 0;
-      right: 0;
-      text-align: center;
-      image {
-        width: 68rpx;
-        height: 68rpx;
-        padding-top: 10rpx;
-      }
-    }
-    .top-bar-r {
-      float: right;
-      padding-right: 14rpx;
-      .add {
-        display: inline-block;
-        width: 88rpx;
-        height: 88rpx;
-      }
-      .search {
-        display: inline-block;
-        width: 88rpx;
-        height: 88rpx;
-      }
-      image {
-        width: 52rpx;
-        height: 52rpx;
-        padding: 18rpx 0 0 18rpx;
-      }
-    }
-  }
-  .main {
-    padding: 88rpx $uni-spacing-col-base 0;
-    // border: 1px solid red;
-  }
-  .friend-list {
-    position: relative;
-    height: 98rpx;
-    width: 100%;
-    padding: 16rpx 0;
-    &:active {
-      background-color: #f3f3f3;
-    }
-    .friend-list-l {
-      float: left;
-      image {
-        width: 96rpx;
-        height: 96rpx;
-        background: #ffe431;
-        border-radius: 24rpx;
-      }
-      .tip {
-        position: absolute;
-        z-index: 1000;
-        top: 2rpx;
-        left: 70rpx;
-        min-width: 36rpx;
-        height: 36rpx;
-        line-height: 36rpx;
-        font-family: PingFangSC-Regular;
-        font-size: 24rpx;
-        color: #ffffff;
-        font-weight: 400;
-        border-radius: 50%;
-        background-color: #ff5d5b;
-        text-align: center;
-      }
-    }
-    .friend-list-r {
-      padding-left: 128rpx;
-      .top {
-        height: 50rpx;
-        .name {
-          float: left;
-          font-size: 36rpx;
-          color: #272832;
-          font-weight: 400;
-          line-height: 50rpx;
-        }
-        .time {
-          float: right;
-          font-size: 24rpx;
-          color: rgba(39, 40, 50, 0.4);
-          font-weight: 400;
-          line-height: 50rpx;
-        }
-      }
-      .news {
-        font-size: 28rpx;
-        color: rgba(39, 40, 50, 0.6);
-        font-weight: 400;
-        display: -webkit-box;
-        -webkit-line-clamp: 1;
-        -webkit-box-orient: vertical;
-        overflow: hidden;
-      }
-    }
-  }
+<style scoped>
+.chat-list-container {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  background-color: #f7f7f7;
 }
-</style> -->
-<template>
-  <view>home</view>
-</template>
+
+.top-bar {
+  display: flex;
+  align-items: center;
+  padding: 10px;
+  background-color: #ededed;
+}
+
+.avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 5px;
+}
+
+.search-box {
+  flex: 0 1 40px;
+  height: 40px;
+  margin-left: 10px;
+  background-color: #fff;
+  border-radius: 20px;
+  display: flex;
+  align-items: center;
+  transition: all 0.3s ease;
+  overflow: hidden;
+}
+
+.search-box.expanded {
+  flex: 1;
+  margin-right: 10px;
+}
+
+.search-icon {
+  width: 20px;
+  height: 20px;
+  margin: 0 10px;
+}
+
+.search-box input {
+  flex: 1;
+  height: 100%;
+  border: none;
+  outline: none;
+  font-size: 14px;
+}
+
+.icons {
+  margin-left: auto;
+}
+
+.icons image {
+  width: 24px;
+  height: 24px;
+}
+
+.chat-list {
+  flex: 1;
+  overflow-y: auto;
+}
+
+.chat-item {
+  display: flex;
+  padding: 12px;
+  background-color: #fff;
+  border-bottom: 1px solid #f0f0f0;
+  transition: background-color 0.2s ease;
+}
+
+.chat-item.active {
+  background-color: #d9d9d9;
+}
+
+.avatar-container {
+  position: relative;
+  margin-right: 12px;
+}
+
+.chat-avatar {
+  width: 50px;
+  height: 50px;
+  border-radius: 4px;
+}
+
+.unread-count {
+  position: absolute;
+  top: -5px;
+  right: -5px;
+  background-color: #f43530;
+  color: #fff;
+  font-size: 12px;
+  padding: 2px 6px;
+  border-radius: 10px;
+  min-width: 18px;
+  height: 18px;
+  text-align: center;
+  line-height: 18px;
+}
+
+.chat-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.chat-header {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 5px;
+}
+
+.chat-name {
+  font-size: 16px;
+  font-weight: 500;
+  color: #000;
+}
+
+.chat-time {
+  font-size: 12px;
+  color: #b2b2b2;
+}
+
+.chat-message {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.message-content {
+  font-size: 14px;
+  color: #b2b2b2;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%;
+}
+</style>
